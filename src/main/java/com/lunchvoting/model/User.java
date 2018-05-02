@@ -1,14 +1,31 @@
 package com.lunchvoting.model;
 
+import org.hibernate.annotations.BatchSize;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.EnumSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "user")
 public class User extends AbstractNamedEntity {
 
+    @Email
+    @NotBlank
+    @Column(name = "email", nullable = false)
     private String email;
 
+    @NotBlank
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @BatchSize(size = 200)
     private Set<Role> roles;
 
     public User() {}
