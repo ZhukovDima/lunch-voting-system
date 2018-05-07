@@ -1,5 +1,7 @@
 package com.lunchvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ public class Menu extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
     private Restaurant restaurant;
 
     @Column(name="date_entered", columnDefinition = "DATE DEFAULT current_date")

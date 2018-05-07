@@ -14,6 +14,10 @@ public class RestaurantTestData {
 
     public static final Restaurant RESTAURANT2 = new Restaurant(RESTAURANT_2_ID, "Restaurant2");
 
+    public static Restaurant getNew() {
+        return new Restaurant(null, "New restaurant");
+    }
+
     public static void assertMatch(Iterable<Restaurant> actual, Restaurant... expected) {
         assertMatch(actual, Arrays.asList(expected));
     }

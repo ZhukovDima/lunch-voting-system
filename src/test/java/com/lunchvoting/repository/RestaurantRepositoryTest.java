@@ -17,7 +17,7 @@ public class RestaurantRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testSave() {
-        Restaurant newRestaurant = new Restaurant(null, "New restaurant");
+        Restaurant newRestaurant = getNew();
         Restaurant restaurantCreated = restaurantRepository.save(newRestaurant);
         newRestaurant.setId(restaurantCreated.getId());
         assertMatch(restaurantRepository.findAll(), RESTAURANT1, RESTAURANT2, newRestaurant);
