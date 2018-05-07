@@ -1,5 +1,7 @@
 package com.lunchvoting.web.restaurant;
 
+import com.lunchvoting.TestUtil;
+import com.lunchvoting.UserTestData;
 import com.lunchvoting.repository.RestaurantRepository;
 import com.lunchvoting.web.AbstractControllerTest;
 import com.lunchvoting.web.json.JsonUtil;
@@ -21,7 +23,8 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetAllWithCurrentMenu() throws Exception {
-            mockMvc.perform(get(REST_URL))
+            mockMvc.perform(get(REST_URL)
+                    .with(TestUtil.userHttpBasic(UserTestData.USER1)))
                     .andExpect(status().isOk())
                     .andDo(print())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
