@@ -5,7 +5,6 @@ import com.lunchvoting.model.MenuItem;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import static com.lunchvoting.RestaurantTestData.*;

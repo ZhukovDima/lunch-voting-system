@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -66,7 +65,6 @@ public class Menu extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Menu{" +
-                "restaurant=" + restaurant +
                 ", dateEntered=" + dateEntered +
                 ", items=" + items +
                 ", id=" + id +

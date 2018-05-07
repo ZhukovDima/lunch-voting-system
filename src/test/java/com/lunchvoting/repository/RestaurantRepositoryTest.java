@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.lunchvoting.RestaurantTestData.*;
-import static org.junit.Assert.*;
 
 public class RestaurantRepositoryTest extends AbstractRepositoryTest {
 
@@ -27,7 +26,7 @@ public class RestaurantRepositoryTest extends AbstractRepositoryTest {
     @Test
     public void testGetAllWithCurrentMenu() {
         List<Restaurant> restaurants = new ArrayList<>(restaurantRepository.getAllWithCurrentMenu());
-        assertEquals(2, restaurants.size());
+        assertMatch(restaurants, RESTAURANT1, RESTAURANT2);
         MenuTestData.assertMatch(restaurants.get(0).getMenus(), MenuTestData.R_1_MENU_1);
         MenuTestData.assertMatch(restaurants.get(1).getMenus(), MenuTestData.R_2_MENU_1);
     }

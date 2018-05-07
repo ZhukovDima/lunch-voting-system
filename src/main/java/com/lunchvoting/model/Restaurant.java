@@ -33,5 +33,11 @@ public class Restaurant extends AbstractNamedEntity {
         this.menus = menus;
     }
 
-
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }
