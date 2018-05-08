@@ -1,5 +1,7 @@
 package com.lunchvoting.web.restaurant;
 
+import com.lunchvoting.TestUtil;
+import com.lunchvoting.UserTestData;
 import com.lunchvoting.web.AbstractControllerTest;
 import com.lunchvoting.web.json.JsonUtil;
 import org.junit.Test;
@@ -16,6 +18,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     public void testCreate() throws Exception {
         mockMvc.perform(post(REST_URL)
+            .with(TestUtil.userHttpBasic(UserTestData.ADMIN))
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .content(JsonUtil.writeValue(getNew())))
             .andExpect(status().isCreated());
