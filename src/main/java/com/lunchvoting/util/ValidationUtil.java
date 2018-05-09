@@ -2,6 +2,8 @@ package com.lunchvoting.util;
 
 import com.lunchvoting.util.exception.NotFoundException;
 
+import java.util.Optional;
+
 public class ValidationUtil {
 
     private ValidationUtil() {
@@ -20,5 +22,15 @@ public class ValidationUtil {
         if (!found) {
             throw new NotFoundException("Not found entity with " + msg);
         }
+    }
+
+    public static Throwable getRootCause(Throwable t) {
+        Throwable result = t;
+        Throwable cause;
+
+        while (null != (cause = result.getCause()) && (result != cause)) {
+            result = cause;
+        }
+        return result;
     }
 }
