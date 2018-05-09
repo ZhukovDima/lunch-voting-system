@@ -12,8 +12,13 @@ public class MenuRepositoryTest extends AbstractRepositoryTest {
     private MenuRepository menuRepository;
 
     @Test
-    public void save() {
+    public void testSave() {
         Menu created = menuRepository.save(NEW_MENU);
         assertMatch(menuRepository.findAll(), R_1_MENU_1, R_2_MENU_1, created);
+    }
+
+    @Test
+    public void testGetAllCurrent() {
+        assertMatch(menuRepository.getAllCurrent(), R_1_MENU_1, R_2_MENU_1);
     }
 }

@@ -1,21 +1,17 @@
 package com.lunchvoting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "menu")
 public class Menu extends AbstractBaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
-    @JsonIgnore
     private Restaurant restaurant;
 
     @Column(name="date_entered", columnDefinition = "DATE DEFAULT current_date")
@@ -24,17 +20,16 @@ public class Menu extends AbstractBaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_id")
-    @OrderBy
-    private Set<MenuItem> items;
+    private List<MenuItem> items;
 
     public Menu() {
     }
 
     public Menu(Integer id, Restaurant restaurant, LocalDate dateEntered, MenuItem... items) {
-        this(id, restaurant, dateEntered, new LinkedHashSet<>(Arrays.asList(items)));
+        this(id, restaurant, dateEntered, Arrays.asList(items));
     }
 
-    public Menu(Integer id, Restaurant restaurant, LocalDate dateEntered, Set<MenuItem> items) {
+    public Menu(Integer id, Restaurant restaurant, LocalDate dateEntered, List<MenuItem> items) {
         super(id);
         this.restaurant = restaurant;
         this.dateEntered = dateEntered;
@@ -57,20 +52,21 @@ public class Menu extends AbstractBaseEntity {
         this.dateEntered = dateEntered;
     }
 
-    public Set<MenuItem> getItems() {
+    public List<MenuItem> getItems() {
         return items;
     }
 
-    public void setItems(Set<MenuItem> items) {
+    public void setItems(List<MenuItem> items) {
         this.items = items;
     }
 
     @Override
     public String toString() {
         return "Menu{" +
+                "id=" + id +
+                " restaurant=" + restaurant +
                 ", dateEntered=" + dateEntered +
                 ", items=" + items +
-                ", id=" + id +
                 '}';
     }
 }
