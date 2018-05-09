@@ -31,5 +31,5 @@ INSERT INTO menu_item (id, menu_id, name, price) VALUES
   (5, 2, 'Menu2 Item2', 400),
   (6, 2, 'Menu2 Item3', 600);
 
-INSERT INTO vote (restaurant_id, user_id) VALUES
-  (1, 1);
+INSERT INTO vote (id, restaurant_id, user_id) VALUES
+  (1, 1, 1);

@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
+
         return userRepository.getByEmail(email);
     }
 
