@@ -1,5 +1,6 @@
 package com.lunchvoting;
 import com.lunchvoting.model.Vote;
+import com.lunchvoting.to.VoteTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +22,10 @@ public class VoteTestData {
             new Vote(R1_VOTE1_ID, RESTAURANT2, UserTestData.USER1, LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 59,0)));
     public static final Vote R1_USER1_VOTE1_TIME_VIOLATION =
             new Vote(R1_VOTE1_ID, RESTAURANT2, UserTestData.USER1, LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 0,0)));
+
+    public static VoteTo getNew() {
+        return new VoteTo(null, RESTAURANT1);
+    }
 
     public static Vote getNewByUser2() {
         return new Vote(null, RESTAURANT1, UserTestData.USER2);
