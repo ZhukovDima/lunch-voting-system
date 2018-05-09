@@ -1,4 +1,4 @@
-package com.lunchvoting.web.vote;
+package com.lunchvoting.web;
 
 import com.lunchvoting.AuthorizedUser;
 import com.lunchvoting.model.Vote;
@@ -8,6 +8,7 @@ import com.lunchvoting.to.VoteTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 import static com.lunchvoting.util.ValidationUtil.checkNotFoundWithId;
-import static com.lunchvoting.web.vote.VoteRestController.REST_URL;
+import static com.lunchvoting.web.VoteRestController.REST_URL;
 
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -31,6 +32,7 @@ public class VoteRestController {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     public ResponseEntity<VoteTo> create(@RequestBody VoteTo voteTo) {
         Vote voteFromTo = new Vote(null,

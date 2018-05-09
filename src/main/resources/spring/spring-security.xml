@@ -7,8 +7,7 @@
 
     <security:http pattern="/rest/**" use-expressions="true" name="restSecurityFilterChain" create-session="stateless">
         <security:http-basic />
-        <security:intercept-url pattern="/rest/admin/**" access="hasRole('ROLE_ADMIN')" />
-        <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+        <security:intercept-url pattern="/**" access="isAuthenticated()" />
         <security:csrf disabled="true"/>
     </security:http>
 
