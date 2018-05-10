@@ -18,6 +18,10 @@ public class RestaurantTestData {
         return new Restaurant(null, "New restaurant");
     }
 
+    public static void assertMatch(Restaurant actual, Restaurant expected) {
+        assertThat(actual).isEqualToComparingFieldByField(expected);
+    }
+
     public static void assertMatch(Iterable<Restaurant> actual, Restaurant... expected) {
         assertMatch(actual, Arrays.asList(expected));
     }

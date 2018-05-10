@@ -2,18 +2,18 @@ package com.lunchvoting.web;
 
 import com.lunchvoting.model.Restaurant;
 import com.lunchvoting.repository.RestaurantRepository;
+import com.lunchvoting.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import static com.lunchvoting.util.ValidationUtil.*;
 import static com.lunchvoting.web.RestaurantRestController.REST_URL;
 
 @RestController
@@ -35,5 +35,29 @@ public class RestaurantRestController {
                 .buildAndExpand(created.getId()).toUri();
 
         return ResponseEntity.created(uriOfNewResource).body(created);
+    }
+
+    @GetMapping
+    public Iterable<Restaurant> getAll() {
+        return restaurantRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Restaurant get(@PathVariable("id") int id) {
+        return checkNotFoundWithId(restaurantRepository.findById(id).orElse(null), id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public void update(@RequestBody Restaurant restaurant, @PathVariable("id") int id) {
+        assureIdConsistent(restaurant, id);
+        restaurantRepository.save(restaurant);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") int id) {
+        restaurantRepository.delete(restaurantRepository.getOne(id));
     }
 }

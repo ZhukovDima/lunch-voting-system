@@ -1,5 +1,6 @@
 package com.lunchvoting.util;
 
+import com.lunchvoting.HasId;
 import com.lunchvoting.util.exception.NotFoundException;
 
 import java.util.Optional;
@@ -21,6 +22,14 @@ public class ValidationUtil {
     public static void checkNotFound(boolean found, String msg) {
         if (!found) {
             throw new NotFoundException("Not found entity with " + msg);
+        }
+    }
+
+    public static void assureIdConsistent(HasId bean, int id) {
+        if (bean.isNew()) {
+            bean.setId(id);
+        } else if (bean.getId() != id) {
+            throw new IllegalArgumentException(bean + " must be with id=" + id);
         }
     }
 

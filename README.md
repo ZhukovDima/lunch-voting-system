@@ -23,8 +23,16 @@ git clone https://github.com/
 
 ### Restaurants
 cURL:
+##### Get a restaurant
+curl http://localhost:8080/rest/restaurants/1 -s -u user1@mail.com:password1
+##### Get a list of restaurants
+curl http://localhost:8080/rest/restaurants -s -u user1@mail.com:password1
 ##### Create a new restaurant
-curl http://localhost:8080/rest/restaurants -s -X POST -d '{"name":"New restaurant"}' -H 'Content-Type: application/json' -u admin@mail.com:admin 
+curl http://localhost:8080/rest/restaurants -s -X POST -d '{"name":"New restaurant"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Update a restaurant
+curl http://localhost:8080/rest/restaurants/1 -s -X PUT -d '{"name":"Updated restaurant"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Delete a restaurant
+curl http://localhost:8080/rest/restaurants/1 -s -X DELETE -u admin@mail.com:admin
 
 ### Menus
 cURL:
