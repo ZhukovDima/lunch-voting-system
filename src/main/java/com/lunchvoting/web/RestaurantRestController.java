@@ -2,7 +2,6 @@ package com.lunchvoting.web;
 
 import com.lunchvoting.model.Restaurant;
 import com.lunchvoting.repository.RestaurantRepository;
-import com.lunchvoting.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 import static com.lunchvoting.util.ValidationUtil.*;
@@ -27,7 +27,7 @@ public class RestaurantRestController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         Restaurant created = restaurantRepository.save(restaurant);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -37,27 +37,31 @@ public class RestaurantRestController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @GetMapping
-    public Iterable<Restaurant> getAll() {
-        return restaurantRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Restaurant get(@PathVariable("id") int id) {
-        return checkNotFoundWithId(restaurantRepository.findById(id).orElse(null), id);
-    }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public void update(@RequestBody Restaurant restaurant, @PathVariable("id") int id) {
+    public Restaurant update(@PathVariable("id") int id, @Valid @RequestBody Restaurant restaurant) {
         assureIdConsistent(restaurant, id);
-        restaurantRepository.save(restaurant);
+        checkNotFoundWithId(restaurantRepository.existsById(id), id);
+        return restaurantRepository.save(restaurant);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
-        restaurantRepository.delete(restaurantRepository.getOne(id));
+        checkNotFoundWithId(restaurantRepository.existsById(id), id);
+        restaurantRepository.deleteById(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<Iterable<Restaurant>> getAll() {
+        return new ResponseEntity<>(restaurantRepository.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Restaurant> get(@PathVariable("id") int id) {
+        return restaurantRepository.findById(id)
+                .map(r -> new ResponseEntity<>(r, HttpStatus.OK))
+                .orElseThrow(notFoundWithId(id));
     }
 }

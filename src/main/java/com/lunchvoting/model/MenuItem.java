@@ -1,5 +1,6 @@
 package com.lunchvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ public class MenuItem extends AbstractNamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
+    @JsonIgnore
     private Menu menu;
 
     @Column(name = "price")
@@ -31,6 +33,14 @@ public class MenuItem extends AbstractNamedEntity {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
     @Override

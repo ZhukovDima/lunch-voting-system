@@ -56,7 +56,6 @@ public class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(contentJsonArray(RESTAURANT1, RESTAURANT2)));
-
     }
 
     @Test

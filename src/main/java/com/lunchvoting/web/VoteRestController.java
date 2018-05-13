@@ -17,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import static com.lunchvoting.util.ValidationUtil.checkNotFoundWithId;
 import static com.lunchvoting.web.VoteRestController.REST_URL;
 
 @RestController
@@ -36,7 +35,7 @@ public class VoteRestController {
     @PostMapping
     public ResponseEntity<VoteTo> create(@RequestBody VoteTo voteTo) {
         Vote voteFromTo = new Vote(null,
-                checkNotFoundWithId(restaurantRepository.getOne(voteTo.getRestaurant().getId()), voteTo.getRestaurant().getId()),
+                restaurantRepository.getOne(voteTo.getRestaurant().getId()),
                 AuthorizedUser.get().getUser());
         Vote vote = voteService.createOrUpdate(voteFromTo);
         voteTo.setId(vote.getId());

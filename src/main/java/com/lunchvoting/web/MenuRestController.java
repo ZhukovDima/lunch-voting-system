@@ -1,17 +1,20 @@
 package com.lunchvoting.web;
 
 import com.lunchvoting.model.Menu;
-import com.lunchvoting.model.Restaurant;
 import com.lunchvoting.repository.MenuRepository;
 import com.lunchvoting.repository.RestaurantRepository;
+import com.lunchvoting.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 
 import static com.lunchvoting.util.ValidationUtil.*;
 
@@ -19,7 +22,7 @@ import static com.lunchvoting.util.ValidationUtil.*;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class MenuRestController {
 
-    static final String MENU_REST_URL = "/rest/menus";
+    static final String REST_URL = "/rest/restaurants/menus";
     static final String RESTAURANT_MENU_REST_URL = "/rest/restaurants/{restaurantId}/menus";
 
     @Autowired
@@ -30,10 +33,12 @@ public class MenuRestController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = RESTAURANT_MENU_REST_URL)
-    public ResponseEntity<Menu> create(@PathVariable("restaurantId") int restaurantId, @RequestBody Menu menu) {
-        Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getOne(restaurantId), restaurantId);
-        menu.setRestaurant(restaurant);
-        Menu created = menuRepository.save(menu);
+    public ResponseEntity<Menu> create(@RequestBody Menu menu, @PathVariable("restaurantId") int restaurantId) {
+       Menu created = restaurantRepository.findById(restaurantId).map(r -> {
+            menu.setRestaurant(r);
+            return menuRepository.save(menu);
+        }).orElseThrow(notFoundWithId(restaurantId));
+
 
         URI uriOfNewResourse = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(RESTAURANT_MENU_REST_URL + "/{menuId}")
@@ -42,8 +47,44 @@ public class MenuRestController {
         return ResponseEntity.created(uriOfNewResourse).body(created);
     }
 
-    @GetMapping(value = MENU_REST_URL)
-    public Iterable<Menu> getAllCurrent() {
-        return menuRepository.getAllCurrent();
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
+    public Menu update(@RequestBody Menu menu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
+        checkNotFoundWithId(restaurantRepository.existsById(id), id);
+        assureIdConsistent(menu, id);
+
+        return menuRepository.findById(id).map(m -> {
+            assureIdConsistent(menu.getRestaurant(), restaurantId);
+            return menuRepository.save(menu);
+        }).orElseThrow(notFoundWithId(id));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") int id) {
+        checkNotFoundWithId(menuRepository.existsById(id), id);
+        menuRepository.deleteById(id);
+    }
+
+    @GetMapping(value = REST_URL)
+    public ResponseEntity<Iterable<Menu>> getAll(@RequestParam(value = "date", required = false) LocalDate date) {
+        return new ResponseEntity<>(menuRepository.getAllByDate(date != null ? date : LocalDate.now()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
+    public ResponseEntity<Menu> get(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
+        return menuRepository.findById(id)
+                .map(m -> {
+                    assureIdConsistent(m.getRestaurant(), restaurantId);
+                    return new ResponseEntity<>(m, HttpStatus.OK);
+                })
+                .orElseThrow(notFoundWithId(id));
+    }
+
+    @GetMapping(value = RESTAURANT_MENU_REST_URL)
+    public ResponseEntity<Menu> getByRestaurantId(@PathVariable("restaurantId") int restaurantId, @RequestParam(value = "date", required = false) LocalDate date) {
+        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
+        return new ResponseEntity<>(menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now()), HttpStatus.OK);
     }
 }
