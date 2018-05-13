@@ -24,12 +24,12 @@ INSERT INTO menu (id, restaurant_id) VALUES
   (2, 2);
 
 INSERT INTO menu_item (id, menu_id, name, price) VALUES
-  (1, 1, 'Menu1 Item1', 300),
-  (2, 1, 'Menu1 Item2', 600),
-  (3, 1, 'Menu1 Item3', 900),
-  (4, 2, 'Menu2 Item1', 200),
-  (5, 2, 'Menu2 Item2', 400),
-  (6, 2, 'Menu2 Item3', 600);
+  (1, 1, 'Item1', 300),
+  (2, 1, 'Item2', 600),
+  (3, 1, 'Item3', 900),
+  (4, 2, 'Item1', 200),
+  (5, 2, 'Item2', 400),
+  (6, 2, 'Item3', 600);
 
 INSERT INTO vote (id, restaurant_id, user_id) VALUES
   (1, 1, 1);

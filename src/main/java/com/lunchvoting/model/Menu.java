@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "menu")
 public class Menu extends AbstractBaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
@@ -18,8 +18,9 @@ public class Menu extends AbstractBaseEntity {
     @NotNull
     private LocalDate dateEntered = LocalDate.now();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_id")
+    @OrderBy
     private List<MenuItem> items;
 
     public Menu() {
@@ -64,9 +65,7 @@ public class Menu extends AbstractBaseEntity {
     public String toString() {
         return "Menu{" +
                 "id=" + id +
-                " restaurant=" + restaurant +
                 ", dateEntered=" + dateEntered +
-                ", items=" + items +
                 '}';
     }
 }
