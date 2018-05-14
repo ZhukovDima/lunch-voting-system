@@ -50,7 +50,7 @@ public class MenuRestController {
         assureIdConsistent(updatedMenu, id);
         return menuRepository.findById(id).map(m -> {
             assureIdConsistent(m.getRestaurant(), restaurantId);
-            updatedMenu.setRestaurant(m.getRestaurant());
+            updatedMenu.setRestaurant(restaurantRepository.getOne(restaurantId));
             return menuRepository.save(updatedMenu);
         }).orElseThrow(notFoundWithId(id));
     }
@@ -78,8 +78,8 @@ public class MenuRestController {
     }
 
     @GetMapping(value = RESTAURANT_MENU_REST_URL)
-    public ResponseEntity<Menu> getByRestaurantId(@PathVariable("restaurantId") int restaurantId, @RequestParam(value = "date", required = false) LocalDate date) {
-        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
-        return new ResponseEntity<>(menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now()), HttpStatus.OK);
+    public Menu getByRestaurantId(@PathVariable("restaurantId") int restaurantId, @RequestParam(value = "date", required = false) LocalDate date) {
+        return checkNotFound(menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now()),
+                "restaurantId=" + restaurantId + (date != null ? "date=" + date : ""));
     }
 }
