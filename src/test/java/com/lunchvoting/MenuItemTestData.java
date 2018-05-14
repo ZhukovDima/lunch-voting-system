@@ -9,15 +9,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MenuItemTestData {
 
-    public static final MenuItem M1_ITEM_1 = new MenuItem(1, "Item1", 300, R_1_MENU_1);
-    public static final MenuItem M1_ITEM_2 = new MenuItem(2, "Item2", 600, R_1_MENU_1);
-    public static final MenuItem M1_ITEM_3 = new MenuItem(3, "Item3", 900, R_1_MENU_1);
-    public static final MenuItem M2_ITEM_1 = new MenuItem(4, "Item1", 200, R_2_MENU_1);
-    public static final MenuItem M2_ITEM_2 = new MenuItem(5, "Item2", 400, R_2_MENU_1);
-    public static final MenuItem M2_ITEM_3 = new MenuItem(6, "Item3", 600, R_2_MENU_1);
+    public static final int M1_ITEM_1_ID = 1;
+    public static final MenuItem M1_ITEM_1 = new MenuItem(M1_ITEM_1_ID, "Item1", 300, R_1_MENU_1);
+    public static final MenuItem M1_ITEM_2 = new MenuItem(M1_ITEM_1_ID + 1, "Item2", 600, R_1_MENU_1);
+    public static final MenuItem M1_ITEM_3 = new MenuItem(M1_ITEM_1_ID + 2, "Item3", 900, R_1_MENU_1);
+    public static final MenuItem M2_ITEM_1 = new MenuItem(M1_ITEM_1_ID + 3, "Item1", 200, R_2_MENU_1);
+    public static final MenuItem M2_ITEM_2 = new MenuItem(M1_ITEM_1_ID + 4, "Item2", 400, R_2_MENU_1);
+    public static final MenuItem M2_ITEM_3 = new MenuItem(M1_ITEM_1_ID + 5, "Item3", 600, R_2_MENU_1);
 
     public static MenuItem getNew() {
         return new MenuItem(null, "New item", 950, R_1_MENU_1);
+    }
+
+    public static void assertMatch(MenuItem actual, MenuItem expected) {
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "menu");
     }
 
     public static void assertMatch(Iterable<MenuItem> actual, MenuItem... expected) {

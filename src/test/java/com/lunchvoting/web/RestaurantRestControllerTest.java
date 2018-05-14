@@ -80,11 +80,26 @@ public class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testUpdateUnauth() throws Exception {
+        mockMvc.perform(put(REST_URL + RESTAURANT_1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(RESTAURANT1)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete(REST_URL + RESTAURANT_1_ID)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertMatch(restaurantRepository.findAll(), RESTAURANT2);
+    }
+
+    @Test
+    public void testDeleteUnauth() throws Exception {
+        mockMvc.perform(delete(REST_URL + RESTAURANT_1_ID))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }

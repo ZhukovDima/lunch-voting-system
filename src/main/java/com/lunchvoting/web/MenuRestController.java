@@ -3,7 +3,6 @@ package com.lunchvoting.web;
 import com.lunchvoting.model.Menu;
 import com.lunchvoting.repository.MenuRepository;
 import com.lunchvoting.repository.RestaurantRepository;
-import com.lunchvoting.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 
@@ -50,11 +48,11 @@ public class MenuRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     public Menu update(@RequestBody Menu menu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
-        checkNotFoundWithId(restaurantRepository.existsById(id), id);
+        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
         assureIdConsistent(menu, id);
-
         return menuRepository.findById(id).map(m -> {
-            assureIdConsistent(menu.getRestaurant(), restaurantId);
+
+            menu.setRestaurant(restaurantRepository.getOne(restaurantId));
             return menuRepository.save(menu);
         }).orElseThrow(notFoundWithId(id));
     }
@@ -68,12 +66,13 @@ public class MenuRestController {
     }
 
     @GetMapping(value = REST_URL)
-    public ResponseEntity<Iterable<Menu>> getAll(@RequestParam(value = "date", required = false) LocalDate date) {
+    public ResponseEntity<Iterable<Menu>> getAllByDate(@RequestParam(value = "date", required = false) LocalDate date) {
         return new ResponseEntity<>(menuRepository.getAllByDate(date != null ? date : LocalDate.now()), HttpStatus.OK);
     }
 
     @GetMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     public ResponseEntity<Menu> get(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
+        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
         return menuRepository.findById(id)
                 .map(m -> {
                     assureIdConsistent(m.getRestaurant(), restaurantId);

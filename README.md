@@ -24,10 +24,10 @@ git clone https://github.com/
 ## cURL operations on a Restaurant resource 
 ##### Retrieves all restaurants
 curl -s http://localhost:8080/rest/restaurants -u user1@mail.com:password1
-##### Creates a new restaurant
-curl -s http://localhost:8080/rest/restaurants -X POST -d '{"name":"New restaurant"}' -H 'Content-Type: application/json' -u user1@mail.com:password1
 ##### Retrieves a restaurant
 curl -s http://localhost:8080/rest/restaurants/1 -u user1@mail.com:password1
+##### Creates a new restaurant
+curl -s http://localhost:8080/rest/restaurants -X POST -d '{"name":"New restaurant"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Updates a restaurant
 curl -s http://localhost:8080/rest/restaurants/1 -X PUT -d '{"id":1,"name":"Updated restaurant"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Deletes a restaurant
@@ -47,8 +47,14 @@ curl -s http://localhost:8080/rest/restaurants/1/menus?date=2018-05-12 -u user1@
 ##### Creates a new menu
 curl http://localhost:8080/rest/restaurants/2/menus -s -X POST -d '{"dateEntered":"2018-05-13"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Updates a menu
-curl -s http://localhost:8080/rest/restaurants/1/menus/1 -s -X PUT -d '{"id":1, "restaurant":{"id":1,"name":"Restaurant2"}, "dateEntered":"2018-05-13"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+curl -s http://localhost:8080/rest/restaurants/1/menus/1 -s -X PUT -d '{"id":1, "dateEntered":"2018-05-13"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Deletes a menu 
 curl -s http://localhost:8080/rest/restaurants/1/menus/1 -X DELETE -u admin@mail.com:admin
 
 ## cURL operations on a MenuItem resource 
+##### Creates a new menu item
+curl http://localhost:8080/rest/restaurants/1/menus/1/items -s -X POST -d '{"name":"New item","price":950}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Updates a menu item
+curl http://localhost:8080/rest/restaurants/1/menus/1/items/1 -s -X PUT -d '{"name":"Updated item","price":320}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Deletes a menu item
+curl http://localhost:8080/rest/restaurants/1/menus/1/items/1 -s -X DELETE -u admin@mail.com:admin

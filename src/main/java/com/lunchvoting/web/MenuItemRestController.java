@@ -28,9 +28,6 @@ public class MenuItemRestController {
     private MenuItemRepository menuItemRepository;
 
     @Autowired
-    private RestaurantRepository restaurantRepository;
-
-    @Autowired
     private MenuRepository menuRepository;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -57,7 +54,7 @@ public class MenuItemRestController {
     public MenuItem update(@RequestBody MenuItem menuItem, @PathVariable("restaurantId") int restaurantId,
                            @PathVariable("menuId") int menuId, @PathVariable("id") int id) {
         assureIdConsistent(menuItem, id);
-        checkNotFoundWithId(menuRepository.existsById(id), id);
+        checkNotFoundWithId(menuRepository.existsById(menuId), menuId);
 
         return menuItemRepository.findById(id)
                 .map(i -> {
@@ -68,6 +65,7 @@ public class MenuItemRestController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("restaurantId") int restaurantId,
                        @PathVariable("menuId") int menuId, @PathVariable("id") int id) {

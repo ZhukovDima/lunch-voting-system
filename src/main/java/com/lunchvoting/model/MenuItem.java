@@ -27,6 +27,10 @@ public class MenuItem extends AbstractNamedEntity {
         this.menu = menu;
     }
 
+    public MenuItem(MenuItem item) {
+        this(item.getId(), item.getName(), item.getPrice(), item.getMenu());
+    }
+
     public Integer getPrice() {
         return price;
     }

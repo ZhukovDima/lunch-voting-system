@@ -37,6 +37,10 @@ public class Menu extends AbstractBaseEntity {
         this.items = items;
     }
 
+    public Menu(Menu menu) {
+        this(menu.getId(), menu.getRestaurant(), menu.getDateEntered(), menu.getItems());
+    }
+
     public Restaurant getRestaurant() {
         return restaurant;
     }
