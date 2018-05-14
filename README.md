@@ -20,6 +20,8 @@ Each restaurant provides new menu each day.
 ## Github Repository:
 
 git clone https://github.com/
+## cURL operations on a User resource
+curl -s http://localhost:8080/rest/users/1 -u admin@mail.com:admin
 
 ## cURL operations on a Restaurant resource 
 ##### Retrieves all restaurants

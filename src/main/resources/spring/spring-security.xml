@@ -7,6 +7,7 @@
 
     <security:http pattern="/rest/**" use-expressions="true" name="restSecurityFilterChain" create-session="stateless">
         <security:http-basic />
+        <security:intercept-url pattern="/rest/admin/**" access="hasRole('ROLE_ADMIN')"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()" />
         <security:csrf disabled="true"/>
     </security:http>
@@ -14,7 +15,7 @@
     <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder" />
 
     <security:authentication-manager>
-        <security:authentication-provider user-service-ref="userService">
+        <security:authentication-provider user-service-ref="authenticationService">
             <security:password-encoder ref="passwordEncoder" />
         </security:authentication-provider>
     </security:authentication-manager>

@@ -1,13 +1,15 @@
 package com.lunchvoting.model;
 
 import org.hibernate.annotations.BatchSize;
-
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.EnumSet;
 import java.util.Set;
 
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "user")
 public class User extends AbstractNamedEntity {
@@ -26,6 +28,7 @@ public class User extends AbstractNamedEntity {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     @BatchSize(size = 200)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Role> roles;
 
     public User() {}
@@ -39,6 +42,10 @@ public class User extends AbstractNamedEntity {
         this.email = email;
         this.password = password;
         this.roles = roles;
+    }
+
+    public User(User user) {
+        this(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRoles());
     }
 
     public String getEmail() {

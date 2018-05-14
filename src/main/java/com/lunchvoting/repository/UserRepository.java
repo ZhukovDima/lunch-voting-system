@@ -6,5 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Integer> {
+
+    @Transactional
+    @Override
+    User save(User user);
+
     User getByEmail(String email);
 }

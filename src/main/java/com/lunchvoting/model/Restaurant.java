@@ -1,7 +1,11 @@
 package com.lunchvoting.model;
 
-import javax.persistence.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "restaurant")
 public class Restaurant extends AbstractNamedEntity {

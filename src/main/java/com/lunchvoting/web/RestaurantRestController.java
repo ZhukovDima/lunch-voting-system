@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -60,7 +61,7 @@ public class RestaurantRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable("id") int id) {
-        return restaurantRepository.findById(id)
+         return restaurantRepository.findById(id)
                 .map(r -> new ResponseEntity<>(r, HttpStatus.OK))
                 .orElseThrow(notFoundWithId(id));
     }

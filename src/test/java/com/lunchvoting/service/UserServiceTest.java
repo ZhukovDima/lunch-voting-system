@@ -1,5 +1,6 @@
 package com.lunchvoting.service;
 
+import com.lunchvoting.repository.UserRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -9,10 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserServiceTest extends AbstractServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Test
     public void testGetByEmail() {
-        assertThat(userService.getByEmail(USER1.getEmail())).isEqualToComparingFieldByField(USER1);
+        assertThat(userRepository.getByEmail(USER1.getEmail())).isEqualToComparingFieldByField(USER1);
     }
 }
