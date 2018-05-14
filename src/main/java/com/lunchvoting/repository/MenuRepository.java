@@ -2,6 +2,7 @@ package com.lunchvoting.repository;
 
 import com.lunchvoting.model.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,4 +34,9 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
                 "LEFT JOIN FETCH m.items i " +
             "WHERE m.dateEntered=:date AND r.id=:restaurantId")
     Menu getByRestaurantId(@Param("restaurantId") int restaurantId, @Param("date") LocalDate date);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Menu m WHERE m.id=:id")
+    int delete(@Param("id") int id);
 }

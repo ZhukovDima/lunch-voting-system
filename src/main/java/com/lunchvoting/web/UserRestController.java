@@ -56,7 +56,6 @@ public class UserRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
-        checkNotFoundWithId(userRepository.existsById(id), id);
-        userRepository.deleteById(id);
+        checkNotFoundWithId(userRepository.delete(id) != 0, id);
     }
 }

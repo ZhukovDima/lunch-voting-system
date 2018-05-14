@@ -37,7 +37,6 @@ public class MenuRestController {
             return menuRepository.save(menu);
         }).orElseThrow(notFoundWithId(restaurantId));
 
-
         URI uriOfNewResourse = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(RESTAURANT_MENU_REST_URL + "/{menuId}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
@@ -47,13 +46,12 @@ public class MenuRestController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
-    public Menu update(@RequestBody Menu menu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
-        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
-        assureIdConsistent(menu, id);
+    public Menu update(@RequestBody Menu updatedMenu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
+        assureIdConsistent(updatedMenu, id);
         return menuRepository.findById(id).map(m -> {
-
-            menu.setRestaurant(restaurantRepository.getOne(restaurantId));
-            return menuRepository.save(menu);
+            assureIdConsistent(m.getRestaurant(), restaurantId);
+            updatedMenu.setRestaurant(m.getRestaurant());
+            return menuRepository.save(updatedMenu);
         }).orElseThrow(notFoundWithId(id));
     }
 
@@ -61,8 +59,7 @@ public class MenuRestController {
     @DeleteMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
-        checkNotFoundWithId(menuRepository.existsById(id), id);
-        menuRepository.deleteById(id);
+        checkNotFoundWithId(menuRepository.delete(id) != 0, id);
     }
 
     @GetMapping(value = REST_URL)
@@ -72,7 +69,6 @@ public class MenuRestController {
 
     @GetMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     public ResponseEntity<Menu> get(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
-        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
         return menuRepository.findById(id)
                 .map(m -> {
                     assureIdConsistent(m.getRestaurant(), restaurantId);

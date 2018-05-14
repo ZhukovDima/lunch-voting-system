@@ -69,7 +69,6 @@ public class MenuItemRestController {
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("restaurantId") int restaurantId,
                        @PathVariable("menuId") int menuId, @PathVariable("id") int id) {
-        checkNotFoundWithId(menuItemRepository.existsById(id), id);
-        menuItemRepository.deleteById(id);
+        checkNotFoundWithId(menuItemRepository.delete(id) != 0, id);
     }
 }

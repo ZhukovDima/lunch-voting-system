@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -50,8 +49,7 @@ public class RestaurantRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
-        checkNotFoundWithId(restaurantRepository.existsById(id), id);
-        restaurantRepository.deleteById(id);
+        checkNotFoundWithId(restaurantRepository.delete(id) != 0, id);
     }
 
     @GetMapping
