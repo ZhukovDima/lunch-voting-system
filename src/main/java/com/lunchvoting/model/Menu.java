@@ -20,7 +20,6 @@ public class Menu extends AbstractBaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_id")
-    @OrderBy
     private List<MenuItem> items;
 
     public Menu() {
