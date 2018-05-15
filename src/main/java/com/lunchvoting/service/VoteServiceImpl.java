@@ -3,6 +3,7 @@ package com.lunchvoting.service;
 import com.lunchvoting.model.Vote;
 import com.lunchvoting.repository.VoteRepository;
 import com.lunchvoting.util.VoteUtil;
+import com.lunchvoting.util.exception.TimeViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
@@ -21,24 +22,24 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public Vote getCurrentByUserId(int userId) {
-        List<Vote> votes = voteRepository.findByUserIdBetween(userId, CURRENT_DAY_START_DATE_TIME, CURRENT_DAY_END_DATE_TIME);
-        return votes == null ? null : DataAccessUtils.singleResult(votes);
+        return voteRepository.findByUserIdBetween(userId, CURRENT_DAY_START_DATE_TIME, CURRENT_DAY_END_DATE_TIME);
     }
-    @Override
-    public List<Vote> getCurrentByRestaurantId(int restaurantId) {
-        return voteRepository.findByRestaurantIdBetween(restaurantId, CURRENT_DAY_START_DATE_TIME, CURRENT_DAY_END_DATE_TIME);
-    }
+
 
     @Override
     public Vote createOrUpdate(Vote vote) {
         Assert.notNull(vote, "Vote must not be null");
-
-        Vote updatedVote;
-        if ((updatedVote = getCurrentByUserId(vote.getUser().getId())) != null) {
+        Vote currentVote;
+        if((currentVote = getCurrentByUserId(vote.getUser().getId())) != null){
             VoteUtil.checkUpdateTimeViolation(vote);
-            vote.setId(updatedVote.getId());
+            vote.setId(currentVote.getId());
+            vote = voteRepository.save(vote);
+            vote.setStatus(Vote.Status.UPDATED);
+        } else {
+            vote = voteRepository.save(vote);
+            vote.setStatus(Vote.Status.CREATED);
         }
 
-        return voteRepository.save(vote);
+        return vote;
     }
 }

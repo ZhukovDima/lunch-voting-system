@@ -1,6 +1,7 @@
 package com.lunchvoting.model;
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -11,10 +12,16 @@ import java.time.LocalDateTime;
 @Table(name = "vote")
 public class Vote extends AbstractBaseEntity {
 
+    public enum Status {
+        NEW,
+        CREATED,
+        UPDATED
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "menu_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Restaurant restaurant;
+    private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -24,25 +31,28 @@ public class Vote extends AbstractBaseEntity {
     @Column(name = "date_time", nullable = false, columnDefinition = "DATE DEFAULT current_date")
     private LocalDateTime dateEntered = LocalDateTime.now();
 
+    @Transient
+    private Status status = Status.NEW;
+
     public Vote() {}
 
-    public Vote(Integer id, Restaurant restaurant, User user) {
-        this(id, restaurant, user, LocalDateTime.now());
+    public Vote(Integer id, Menu menu, User user) {
+        this(id, menu, user, LocalDateTime.now());
     }
 
-    public Vote(Integer id, Restaurant restaurant, User user, LocalDateTime dateEntered) {
+    public Vote(Integer id, Menu menu, User user, LocalDateTime dateEntered) {
         super(id);
-        this.restaurant = restaurant;
+        this.menu = menu;
         this.user = user;
         this.dateEntered = dateEntered;
     }
 
-    public Restaurant getRestaurant() {
-        return restaurant;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
     public User getUser() {
@@ -59,6 +69,14 @@ public class Vote extends AbstractBaseEntity {
 
     public void setDateEntered(LocalDateTime dateEntered) {
         this.dateEntered = dateEntered;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override

@@ -34,4 +34,9 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     @Modifying
     @Query("DELETE FROM Menu m WHERE m.id=:id")
     int delete(@Param("id") int id);
+
+    @Query("SELECT " +
+                "CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
+            "FROM Menu m WHERE m.id=:id AND m.dateEntered=CURRENT_DATE")
+    boolean existsCurrentById(@Param("id") int id);
 }

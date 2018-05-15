@@ -1,42 +1,28 @@
 package com.lunchvoting.to;
 
-import com.lunchvoting.model.Restaurant;
-
 public class VoteTo {
 
-    private Integer id;
-
-    private Restaurant restaurant;
+    private int menuId;
 
     public VoteTo() {
     }
 
-    public VoteTo(Integer id, Restaurant restaurant) {
-        this.id = id;
-        this.restaurant = restaurant;
+    public VoteTo(int menuId) {
+        this.menuId = menuId;
     }
 
-    public Integer getId() {
-        return id;
+    public int getMenuId() {
+        return menuId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public void setMenuId(int menuId) {
+        this.menuId = menuId;
     }
 
     @Override
     public String toString() {
         return "VoteTo{" +
-                "id=" + id +
-                ", restaurant=" + restaurant +
+                "menuId=" + menuId +
                 '}';
     }
 }

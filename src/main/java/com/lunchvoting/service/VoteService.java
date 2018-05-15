@@ -8,7 +8,5 @@ public interface VoteService {
 
     Vote getCurrentByUserId(int userId);
 
-    List<Vote> getCurrentByRestaurantId(int restaurantId);
-
     Vote createOrUpdate(Vote vote);
 }

@@ -72,3 +72,7 @@ curl http://localhost:8080/rest/restaurants/1/menus/1/items -s -X POST -d '{"nam
 curl http://localhost:8080/rest/restaurants/1/menus/1/items/1 -s -X PUT -d '{"name":"Updated item","price":320}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Deletes a menu item
 curl http://localhost:8080/rest/restaurants/1/menus/1/items/1 -s -X DELETE -u admin@mail.com:admin
+
+## cURL operations on a Vote resource
+##### Creates a new vote
+curl http://localhost:8080/rest/votes -s -X POST -d '{"menuId":1}' -H 'Content-Type: application/json' -u user1@mail.com:password1

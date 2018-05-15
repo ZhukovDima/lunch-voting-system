@@ -17,11 +17,11 @@ public class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        VoteTo createdTo = VoteTestData.getNew();
+        VoteTo createdTo = VoteTestData.getNewVoteTo();
         mockMvc.perform(post(REST_URL)
                 .with(TestUtil.userHttpBasic(UserTestData.USER2))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(createdTo)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 }

@@ -13,10 +13,7 @@ import java.util.List;
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
 
     @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.dateEntered BETWEEN :startDate AND :endDate")
-    List<Vote> findByUserIdBetween(@Param("userId") int userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
-
-    @Query("SELECT v FROM Vote v WHERE v.restaurant.id=:restaurantId AND v.dateEntered BETWEEN :startDate AND :endDate")
-    List<Vote> findByRestaurantIdBetween(@Param("restaurantId") int restaurantId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    Vote findByUserIdBetween(@Param("userId") int userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Transactional
     @Override

@@ -48,10 +48,10 @@ CREATE TABLE menu_item
 CREATE TABLE vote
 (
   id                INTEGER IDENTITY PRIMARY KEY,
-  restaurant_id     INTEGER  NOT NULL,
+  menu_id           INTEGER  NOT NULL,
   user_id           INTEGER  NOT NULL,
   date_time         TIMESTAMP DEFAULT now() NOT NULL,
-  FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
+  FOREIGN KEY (menu_id) REFERENCES restaurant (id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX vote_unique_user_datetime_idx ON vote (user_id, date_time);
