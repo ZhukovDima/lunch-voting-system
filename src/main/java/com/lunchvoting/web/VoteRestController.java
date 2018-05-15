@@ -3,21 +3,13 @@ package com.lunchvoting.web;
 import com.lunchvoting.AuthorizedUser;
 import com.lunchvoting.model.Vote;
 import com.lunchvoting.repository.MenuRepository;
-import com.lunchvoting.repository.RestaurantRepository;
 import com.lunchvoting.service.VoteService;
-import com.lunchvoting.to.VoteTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
+import org.springframework.web.bind.annotation.*;
 
 import static com.lunchvoting.util.ValidationUtil.checkNotFoundWithId;
 import static com.lunchvoting.web.VoteRestController.REST_URL;
@@ -35,16 +27,20 @@ public class VoteRestController {
     private MenuRepository menuRepository;
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping
-    public ResponseEntity<VoteTo> create(@RequestBody VoteTo voteTo) {
-        int menuId = voteTo.getMenuId();
+    @PostMapping("/{menuId}")
+    public ResponseEntity<?> create(@PathVariable("menuId") int menuId) {
         checkNotFoundWithId(menuRepository.existsCurrentById(menuId), menuId);
-        Vote voteFromTo = new Vote(null,
-                menuRepository.getOne(menuId),
-                AuthorizedUser.get().getUser());
 
-        voteService.createOrUpdate(voteFromTo);
+        Vote vote = voteService.createOrUpdate(new Vote(null, menuRepository.getOne(menuId),
+                AuthorizedUser.get().getUser()));
 
-        return new ResponseEntity<>(voteTo, HttpStatus.OK);
+        switch (vote.getStatus()) {
+            case CREATED:
+                return ResponseEntity.status(HttpStatus.CREATED).build();
+            case UPDATED:
+                return ResponseEntity.status(HttpStatus.OK).build();
+            default:
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 }

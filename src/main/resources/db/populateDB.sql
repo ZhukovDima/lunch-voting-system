@@ -30,3 +30,6 @@ INSERT INTO menu_item (id, menu_id, name, price) VALUES
   (4, 2, 'Item1', 200),
   (5, 2, 'Item2', 400),
   (6, 2, 'Item3', 600);
+
+INSERT INTO vote(id, menu_id, user_id) VALUES
+  (1, 1, 1)

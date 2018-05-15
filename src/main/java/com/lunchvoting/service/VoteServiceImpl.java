@@ -2,17 +2,16 @@ package com.lunchvoting.service;
 
 import com.lunchvoting.model.Vote;
 import com.lunchvoting.repository.VoteRepository;
-import com.lunchvoting.util.VoteUtil;
 import com.lunchvoting.util.exception.TimeViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.List;
+import java.util.Optional;
 
 import static com.lunchvoting.util.DateTimeUtil.CURRENT_DAY_END_DATE_TIME;
 import static com.lunchvoting.util.DateTimeUtil.CURRENT_DAY_START_DATE_TIME;
+import static com.lunchvoting.util.VoteUtil.*;
 
 @Service
 public class VoteServiceImpl implements VoteService {
@@ -21,25 +20,31 @@ public class VoteServiceImpl implements VoteService {
     private VoteRepository voteRepository;
 
     @Override
-    public Vote getCurrentByUserId(int userId) {
+    public Optional<Vote> getCurrentByUserId(int userId) {
         return voteRepository.findByUserIdBetween(userId, CURRENT_DAY_START_DATE_TIME, CURRENT_DAY_END_DATE_TIME);
+    }
+
+    private Vote create(Vote vote) {
+        vote.setStatus(Vote.Status.CREATED);
+        return voteRepository.save(vote);
+    }
+
+    private Vote update(Vote vote, int id) throws TimeViolationException {
+        checkUpdateTimeViolation(vote);
+
+        vote.setId(id);
+        vote = voteRepository.save(vote);
+        vote.setStatus(Vote.Status.UPDATED);
+        return vote;
     }
 
 
     @Override
-    public Vote createOrUpdate(Vote vote) {
+    public Vote createOrUpdate(Vote vote) throws TimeViolationException {
         Assert.notNull(vote, "Vote must not be null");
-        Vote currentVote;
-        if((currentVote = getCurrentByUserId(vote.getUser().getId())) != null){
-            VoteUtil.checkUpdateTimeViolation(vote);
-            vote.setId(currentVote.getId());
-            vote = voteRepository.save(vote);
-            vote.setStatus(Vote.Status.UPDATED);
-        } else {
-            vote = voteRepository.save(vote);
-            vote.setStatus(Vote.Status.CREATED);
-        }
 
-        return vote;
+        return getCurrentByUserId(vote.getUser().getId())
+                .map(v -> update(vote, v.getId()))
+                .orElse(create(vote));
     }
 }

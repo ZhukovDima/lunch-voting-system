@@ -1,12 +1,13 @@
 package com.lunchvoting.service;
 
 import com.lunchvoting.model.Vote;
+import com.lunchvoting.util.exception.TimeViolationException;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface VoteService {
 
-    Vote getCurrentByUserId(int userId);
+    Optional<Vote> getCurrentByUserId(int userId);
 
-    Vote createOrUpdate(Vote vote);
+    Vote createOrUpdate(Vote vote) throws TimeViolationException;
 }
