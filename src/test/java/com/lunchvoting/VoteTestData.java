@@ -32,7 +32,7 @@ public class VoteTestData {
     }
 
     public static void assertMatch(Vote actual, Vote expected) {
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualToComparingOnlyGivenFields(expected, "id");
     }
 
     public static void assertMatch(Iterable<Vote> actual, Vote... expected) {

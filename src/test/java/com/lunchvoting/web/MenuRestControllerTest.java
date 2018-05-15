@@ -11,10 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static com.lunchvoting.MenuTestData.*;
 import static com.lunchvoting.RestaurantTestData.RESTAURANT_1_ID;
+import static com.lunchvoting.TestUtil.*;
 import static com.lunchvoting.TestUtil.contentJson;
 import static com.lunchvoting.TestUtil.contentJsonArray;
 import static com.lunchvoting.UserTestData.ADMIN;
@@ -38,11 +40,11 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     public void testCreate() throws Exception {
         Menu expected = getNew();
         ResultActions action = mockMvc.perform(post(RESTAURANT_MENU_REST_URL)
-                .with(TestUtil.userHttpBasic(ADMIN))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(expected)))
                 .andExpect(status().isCreated());
-        Menu returned = TestUtil.readFromJson(action, Menu.class);
+        Menu returned = readFromJson(action, Menu.class);
         expected.setId(returned.getId());
         assertMatch(returned, expected);
         assertMatch(menuRepository.getAllByDate(LocalDate.now().plus(1, ChronoUnit.DAYS)), returned);
@@ -61,11 +63,11 @@ public class MenuRestControllerTest extends AbstractControllerTest {
         Menu updated = new Menu(R_1_MENU_1);
         updated.setDateEntered(LocalDate.now().plus(1, ChronoUnit.DAYS));
         ResultActions action = mockMvc.perform(put(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
-                .with(TestUtil.userHttpBasic(ADMIN))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
-        Menu returned = TestUtil.readFromJson(action, Menu.class);
+        Menu returned = readFromJson(action, Menu.class);
         assertMatch(returned, updated);
     }
 
@@ -80,7 +82,7 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
-                .with(TestUtil.userHttpBasic(ADMIN)))
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertMatch(menuRepository.getAllByDate(LocalDate.now()), R_2_MENU_1);
@@ -95,7 +97,7 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     public void testGetAllCurrentDate() throws Exception {
         mockMvc.perform(get(REST_URL)
-                .with(TestUtil.userHttpBasic(UserTestData.USER1)))
+                .with(userHttpBasic(UserTestData.USER1)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -104,22 +106,19 @@ public class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetAllByDate() throws Exception {
-        Menu updated = new Menu(R_1_MENU_1_WITH_ITEMS);
-        updated.setDateEntered(LocalDate.of(2018, 5, 10));
-        menuRepository.save(updated);
         mockMvc.perform(get(REST_URL)
-                .param("date", "2018-05-10")
-                .with(TestUtil.userHttpBasic(UserTestData.USER1)))
+                .param("date", DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now()))
+                .with(userHttpBasic(UserTestData.USER1)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(contentJsonArray(updated));
+                .andExpect(contentJsonArray(R_1_MENU_1_WITH_ITEMS, R_2_MENU_1_WITH_ITEMS));
     }
 
     @Test
     public void testGet() throws Exception {
-        mockMvc.perform(get(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
-                .with(TestUtil.userHttpBasic(UserTestData.USER1)))
+        mockMvc.perform(get(REST_URL + R_1_MENU_1_ID)
+                .with(userHttpBasic(UserTestData.USER1)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -129,7 +128,7 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     public void testGetCurrentByRestaurantId() throws Exception {
         mockMvc.perform(get(RESTAURANT_MENU_REST_URL)
-                .with(TestUtil.userHttpBasic(UserTestData.USER1)))
+                .with(userHttpBasic(UserTestData.USER1)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))

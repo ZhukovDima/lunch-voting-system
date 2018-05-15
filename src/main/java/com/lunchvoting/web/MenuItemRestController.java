@@ -3,7 +3,6 @@ package com.lunchvoting.web;
 import com.lunchvoting.model.MenuItem;
 import com.lunchvoting.repository.MenuItemRepository;
 import com.lunchvoting.repository.MenuRepository;
-import com.lunchvoting.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

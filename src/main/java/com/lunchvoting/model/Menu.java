@@ -1,5 +1,8 @@
 package com.lunchvoting.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -12,14 +15,14 @@ public class Menu extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
     @Column(name="date_entered", columnDefinition = "DATE DEFAULT current_date")
     @NotNull
     private LocalDate dateEntered = LocalDate.now();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "menu")
     private List<MenuItem> items;
 
     public Menu() {
@@ -67,8 +70,9 @@ public class Menu extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Menu{" +
-                "id=" + id +
+                "restaurant=" + restaurant +
                 ", dateEntered=" + dateEntered +
-                '}';
+                ", items=" + items +
+                "} " + super.toString();
     }
 }

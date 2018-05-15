@@ -23,7 +23,19 @@ git clone https://github.com/
 ## cURL operations on a User resource
 curl -s http://localhost:8080/rest/users/1 -u admin@mail.com:admin
 
-## cURL operations on a Restaurant resource 
+## cURL operations on a User resource
+##### Retrieves all users
+curl -s http://localhost:8080/rest/users -u admin@mail.com:admin
+##### Retrieves a user
+curl -s http://localhost:8080/rest/users/1 -u admin@mail.com:admin
+##### Creates a user
+curl -s http://localhost:8080/rest/users -X POST -d'{"name":"New user","email":"newuser@mail.com","password":"new123","roles":["ROLE_USER"]}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Updates a user
+curl -s http://localhost:8080/rest/users/1 -X PUT -d '{"id":1,"name":"New user","email":"newuser@mail.com","password":"new123","roles":["ROLE_USER"]}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+##### Deletes a user
+curl -s http://localhost:8080/rest/users/1 -X DELETE -u admin@mail.com:admin
+
+## cURL operations on a Restaurant resource
 ##### Retrieves all restaurants
 curl -s http://localhost:8080/rest/restaurants -u user1@mail.com:password1
 ##### Retrieves a restaurant
@@ -40,9 +52,9 @@ curl -s http://localhost:8080/rest/restaurants/1 -X DELETE -u admin@mail.com:adm
 curl -s http://localhost:8080/rest/restaurants/menus -u user1@mail.com:password1
 ##### Retrieves all menus of restaurants for the given date
 curl -s http://localhost:8080/rest/restaurants/menus?date=2018-05-12 -u user1@mail.com:password1
-##### Retrieves a menu for a given restaurant
-curl -s http://localhost:8080/rest/restaurants/1/menus/1 -u user1@mail.com:password1
-##### Retrieves a menu for a given restaurant for today by default
+##### Retrieves a menu
+curl -s http://localhost:8080/rest/restaurants/menus/1 -u user1@mail.com:password1
+##### Retrieves menus for a given restaurant for today by default
 curl -s http://localhost:8080/rest/restaurants/1/menus -u user1@mail.com:password1
 ##### Retrieves a menu for a given restaurant the given date
 curl -s http://localhost:8080/rest/restaurants/1/menus?date=2018-05-12 -u user1@mail.com:password1

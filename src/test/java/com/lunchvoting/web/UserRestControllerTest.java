@@ -1,12 +1,11 @@
 package com.lunchvoting.web;
 
 import com.lunchvoting.TestUtil;
-import com.lunchvoting.UserTestData;
-import com.lunchvoting.model.Restaurant;
-import com.lunchvoting.model.Role;
 import com.lunchvoting.model.User;
+import com.lunchvoting.repository.UserRepository;
 import com.lunchvoting.web.json.JsonUtil;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -27,21 +26,28 @@ public class UserRestControllerTest extends AbstractControllerTest {
 
     static final String REST_URL = UserRestController.REST_URL + "/";
 
+    @Autowired
+    public UserRepository userRepository;
+
     @Test
     public void testCreate() throws Exception {
-        User expected = new User(null, "New user", "newuser@mail.com", "123456", Role.ROLE_USER);
-        mockMvc.perform(post(REST_URL)
+        User expected = getNew();
+        ResultActions action = mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(expected)))
             .andExpect(status().isCreated());
+        User returned = TestUtil.readFromJson(action, User.class);
+        expected.setId(returned.getId());
+        assertMatch(returned, expected);
+        assertMatch(userRepository.findAll(), USER1, USER2, ADMIN, returned);
     }
 
     @Test
     public void testCreateUnauth() throws Exception {
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(new User(null, "New user", "newuser@mail.com", "123456", Role.ROLE_USER))))
+                .content(JsonUtil.writeValue(getNew())))
             .andExpect(status().isUnauthorized());
     }
 
@@ -50,7 +56,7 @@ public class UserRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(USER1))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(new User(null, "New user", "newuser@mail.com", "123456", Role.ROLE_USER))))
+                .content(JsonUtil.writeValue(getNew())))
             .andExpect(status().isForbidden());
     }
 
@@ -58,11 +64,13 @@ public class UserRestControllerTest extends AbstractControllerTest {
     public void testUpdate() throws Exception {
         User updated = new User(USER1);
         updated.setName("Updated name");
-        mockMvc.perform(put(REST_URL + USER_1_ID)
+        ResultActions action = mockMvc.perform(put(REST_URL + USER_1_ID)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
+        User returned = TestUtil.readFromJson(action, User.class);
+        assertMatch(returned, updated);
     }
 
     @Test
@@ -72,6 +80,7 @@ public class UserRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+        assertMatch(userRepository.findAll(), USER2, ADMIN);
     }
 
     @Test

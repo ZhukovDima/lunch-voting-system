@@ -67,13 +67,10 @@ public class MenuRestController {
         return new ResponseEntity<>(menuRepository.getAllByDate(date != null ? date : LocalDate.now()), HttpStatus.OK);
     }
 
-    @GetMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
-    public ResponseEntity<Menu> get(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
+    @GetMapping(value = REST_URL + "/{id}")
+    public ResponseEntity<Menu> get(@PathVariable("id") int id) {
         return menuRepository.findById(id)
-                .map(m -> {
-                    assureIdConsistent(m.getRestaurant(), restaurantId);
-                    return new ResponseEntity<>(m, HttpStatus.OK);
-                })
+                .map(m -> new ResponseEntity<>(m, HttpStatus.OK))
                 .orElseThrow(notFoundWithId(id));
     }
 

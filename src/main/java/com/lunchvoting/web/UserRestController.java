@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -19,7 +18,7 @@ import static com.lunchvoting.web.UserRestController.REST_URL;
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserRestController {
 
-    static final String REST_URL = "/rest/admin/users";
+    static final String REST_URL = "/rest/users";
 
     @Autowired
     private UserRepository userRepository;

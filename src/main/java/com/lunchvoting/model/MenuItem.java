@@ -1,6 +1,8 @@
 package com.lunchvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ public class MenuItem extends AbstractNamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Menu menu;
 
