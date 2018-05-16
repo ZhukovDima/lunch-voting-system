@@ -18,7 +18,7 @@ import static com.lunchvoting.web.UserRestController.REST_URL;
 
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class UserRestController {
+public class UserRestController extends AbstractController {
 
     static final String REST_URL = "/rest/users";
 
@@ -30,6 +30,7 @@ public class UserRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable("id") int id) {
+        log.info("get user {}", id);
         return userRepository.findById(id)
                 .map(u -> new ResponseEntity<>(u, HttpStatus.OK))
                 .orElseThrow(notFoundWithId(id));
@@ -37,11 +38,13 @@ public class UserRestController {
 
     @GetMapping
     public ResponseEntity<Iterable<User>> getAll() {
+        log.info("getAll");
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<User> create(@RequestBody User user) {
+        log.info("create {}", user);
         User created = userRepository.save(UserUtil.prepareToSave(user, passwordEncoder));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -51,15 +54,17 @@ public class UserRestController {
     }
 
     @PutMapping("/{id}")
-    public User update(@RequestBody User user, @PathVariable("id") int id) {
+    public void update(@RequestBody User user, @PathVariable("id") int id) {
+        log.info("update {}", user);
         assureIdConsistent(user, id);
         checkNotFoundWithId(userRepository.existsById(id), id);
-        return userRepository.save(UserUtil.prepareToSave(user, passwordEncoder));
+        userRepository.save(UserUtil.prepareToSave(user, passwordEncoder));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
+        log.info("delete user {}", id);
         checkNotFoundWithId(userRepository.delete(id) != 0, id);
     }
 }

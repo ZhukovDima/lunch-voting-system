@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="30 seconds">
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>log/lunch-voting.log</file>
+        <file>lunch-voting-system.log</file>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>%date %-5level %logger{50}.%M:%L - %msg%n</pattern>

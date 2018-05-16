@@ -18,7 +18,7 @@ import static com.lunchvoting.util.ValidationUtil.*;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class MenuRestController {
+public class MenuRestController extends AbstractController {
 
     static final String REST_URL = "/rest/restaurants/menus";
     static final String RESTAURANT_MENU_REST_URL = "/rest/restaurants/{restaurantId}/menus";
@@ -32,6 +32,7 @@ public class MenuRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = RESTAURANT_MENU_REST_URL)
     public ResponseEntity<Menu> create(@RequestBody Menu menu, @PathVariable("restaurantId") int restaurantId) {
+       log.info("create {} for restaurant {}", menu, restaurantId);
        Menu created = restaurantRepository.findById(restaurantId).map(r -> {
             menu.setRestaurant(r);
             return menuRepository.save(menu);
@@ -46,12 +47,13 @@ public class MenuRestController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
-    public Menu update(@RequestBody Menu updatedMenu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
-        assureIdConsistent(updatedMenu, id);
-        return menuRepository.findById(id).map(m -> {
+    public void update(@RequestBody Menu menu, @PathVariable("id") int id, @PathVariable("restaurantId") int restaurantId) {
+        log.info("update {} for restaurant {}", menu, restaurantId);
+        assureIdConsistent(menu, id);
+        menuRepository.findById(id).map(m -> {
             assureIdConsistent(m.getRestaurant(), restaurantId);
-            updatedMenu.setRestaurant(restaurantRepository.getOne(restaurantId));
-            return menuRepository.save(updatedMenu);
+            menu.setRestaurant(restaurantRepository.getOne(restaurantId));
+            return menuRepository.save(menu);
         }).orElseThrow(notFoundWithId(id));
     }
 
@@ -59,16 +61,19 @@ public class MenuRestController {
     @DeleteMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
+        log.info("delete menu {}", id);
         checkNotFoundWithId(menuRepository.delete(id) != 0, id);
     }
 
     @GetMapping(value = REST_URL)
     public ResponseEntity<Iterable<Menu>> getAllByDate(@RequestParam(value = "date", required = false) LocalDate date) {
+        log.info("getAll for dates{}", date);
         return new ResponseEntity<>(menuRepository.getAllByDate(date != null ? date : LocalDate.now()), HttpStatus.OK);
     }
 
     @GetMapping(value = REST_URL + "/{id}")
     public ResponseEntity<Menu> get(@PathVariable("id") int id) {
+        log.info("get menu {}", id);
         return menuRepository.findById(id)
                 .map(m -> new ResponseEntity<>(m, HttpStatus.OK))
                 .orElseThrow(notFoundWithId(id));
@@ -76,6 +81,7 @@ public class MenuRestController {
 
     @GetMapping(value = RESTAURANT_MENU_REST_URL)
     public Menu getByRestaurantId(@PathVariable("restaurantId") int restaurantId, @RequestParam(value = "date", required = false) LocalDate date) {
+        log.info("get menu for restaurant {} and date {}", restaurantId, date);
         return checkNotFound(menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now()),
                 "restaurantId=" + restaurantId + (date != null ? "date=" + date : ""));
     }

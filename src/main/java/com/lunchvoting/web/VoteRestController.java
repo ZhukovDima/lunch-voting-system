@@ -16,7 +16,7 @@ import static com.lunchvoting.web.VoteRestController.REST_URL;
 
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class VoteRestController {
+public class VoteRestController extends AbstractController {
 
     static final String REST_URL = "/rest/votes";
 

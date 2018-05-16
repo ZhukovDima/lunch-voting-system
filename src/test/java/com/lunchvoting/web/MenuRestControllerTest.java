@@ -62,13 +62,11 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     public void testUpdate() throws Exception {
         Menu updated = new Menu(R_1_MENU_1);
         updated.setDateEntered(LocalDate.now().plus(1, ChronoUnit.DAYS));
-        ResultActions action = mockMvc.perform(put(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
+        mockMvc.perform(put(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
-        Menu returned = readFromJson(action, Menu.class);
-        assertMatch(returned, updated);
     }
 
     @Test

@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MenuItemRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = "/rest/restaurants/" + RESTAURANT_1_ID + "/menus/" + R_1_MENU_1_ID + "/items/";
+    private static final String ITEMS_REST_URL = MenuItemRestController.ITEMS_REST_URL + "/";
 
     @Test
     public void testCreate() throws Exception {
@@ -47,13 +48,11 @@ public class MenuItemRestControllerTest extends AbstractControllerTest {
     public void testUpdate() throws Exception {
         MenuItem updated = new MenuItem(M1_ITEM_1);
         updated.setName("updated");
-        ResultActions action = mockMvc.perform(put(REST_URL + M1_ITEM_1_ID)
+        mockMvc.perform(put(REST_URL + M1_ITEM_1_ID)
                 .with(TestUtil.userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
-        MenuItem returned = TestUtil.readFromJson(action, MenuItem.class);
-        assertMatch(returned, updated);
     }
 
     @Test
@@ -66,7 +65,7 @@ public class MenuItemRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + M1_ITEM_1_ID)
+        mockMvc.perform(delete(ITEMS_REST_URL + M1_ITEM_1_ID)
                 .with(TestUtil.userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -74,7 +73,7 @@ public class MenuItemRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDeleteUnauth() throws Exception {
-        mockMvc.perform(delete(REST_URL + M1_ITEM_1_ID))
+        mockMvc.perform(delete(ITEMS_REST_URL + M1_ITEM_1_ID))
                 .andExpect(status().isUnauthorized());
     }
 }

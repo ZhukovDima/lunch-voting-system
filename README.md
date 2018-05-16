@@ -19,9 +19,7 @@ Each restaurant provides new menu each day.
 
 ## Github Repository:
 
-git clone https://github.com/
-## cURL operations on a User resource
-curl -s http://localhost:8080/rest/users/1 -u admin@mail.com:admin
+git clone https://github.com/ZhukovDima/lunch-voting-system.git
 
 ## cURL operations on a User resource
 ##### Retrieves all users
@@ -75,4 +73,4 @@ curl http://localhost:8080/rest/restaurants/1/menus/1/items/1 -s -X DELETE -u ad
 
 ## cURL operations on a Vote resource
 ##### Creates a new vote
-curl http://localhost:8080/rest/votes -s -X POST -d '{"menuId":1}' -H 'Content-Type: application/json' -u user1@mail.com:password1
+curl http://localhost:8080/rest/votes/1 -s -X POST -H 'Content-Type: application/json' -u user1@mail.com:password1

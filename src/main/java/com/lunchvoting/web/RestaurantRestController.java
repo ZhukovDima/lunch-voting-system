@@ -18,7 +18,7 @@ import static com.lunchvoting.web.RestaurantRestController.REST_URL;
 
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class RestaurantRestController {
+public class RestaurantRestController extends AbstractController {
 
     static final String REST_URL = "/rest/restaurants";
 
@@ -28,6 +28,7 @@ public class RestaurantRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
+        log.info("create {}", restaurant);
         Restaurant created = restaurantRepository.save(restaurant);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -39,26 +40,30 @@ public class RestaurantRestController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public Restaurant update(@PathVariable("id") int id, @Valid @RequestBody Restaurant restaurant) {
+    public void update(@PathVariable("id") int id, @Valid @RequestBody Restaurant restaurant) {
+        log.info("update {}", restaurant);
         assureIdConsistent(restaurant, id);
         checkNotFoundWithId(restaurantRepository.existsById(id), id);
-        return restaurantRepository.save(restaurant);
+        restaurantRepository.save(restaurant);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") int id) {
+        log.info("delete restaurant {}", id);
         checkNotFoundWithId(restaurantRepository.delete(id) != 0, id);
     }
 
     @GetMapping
     public ResponseEntity<Iterable<Restaurant>> getAll() {
+        log.info("getAll");
         return new ResponseEntity<>(restaurantRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable("id") int id) {
+        log.info("get restaurant {}", id);
          return restaurantRepository.findById(id)
                 .map(r -> new ResponseEntity<>(r, HttpStatus.OK))
                 .orElseThrow(notFoundWithId(id));

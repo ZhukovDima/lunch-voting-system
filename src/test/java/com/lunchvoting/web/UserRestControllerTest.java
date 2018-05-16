@@ -65,13 +65,11 @@ public class UserRestControllerTest extends AbstractControllerTest {
     public void testUpdate() throws Exception {
         User updated = new User(USER1);
         updated.setName("Updated name");
-        ResultActions action = mockMvc.perform(put(REST_URL + USER_1_ID)
+        mockMvc.perform(put(REST_URL + USER_1_ID)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
-        User returned = TestUtil.readFromJson(action, User.class);
-        assertMatch(returned, updated);
     }
 
     @Test
