@@ -2,6 +2,7 @@ package com.lunchvoting;
 
 import com.lunchvoting.model.Role;
 import com.lunchvoting.model.User;
+import com.lunchvoting.web.json.JsonUtil;
 
 import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,11 +18,11 @@ public class UserTestData {
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@mail.com", "admin", Role.ROLE_ADMIN);
 
     public static User getNew() {
-        return new User(null, "New user", "newuser@mail.com", "123456", Role.ROLE_USER);
+        return new User(null, "New user", "newuser@mail.com", "newPass", Role.ROLE_USER);
     }
 
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).isEqualToComparingFieldByField(expected);
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "password");
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {
@@ -29,6 +30,10 @@ public class UserTestData {
     }
 
     public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("password").isEqualTo(expected);
+    }
+
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
     }
 }

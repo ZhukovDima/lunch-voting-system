@@ -2,10 +2,12 @@ package com.lunchvoting.web;
 
 import com.lunchvoting.model.User;
 import com.lunchvoting.repository.UserRepository;
+import com.lunchvoting.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,6 +25,9 @@ public class UserRestController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable("id") int id) {
         return userRepository.findById(id)
@@ -37,7 +42,7 @@ public class UserRestController {
 
     @PostMapping
     public ResponseEntity<User> create(@RequestBody User user) {
-        User created = userRepository.save(user);
+        User created = userRepository.save(UserUtil.prepareToSave(user, passwordEncoder));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -49,7 +54,7 @@ public class UserRestController {
     public User update(@RequestBody User user, @PathVariable("id") int id) {
         assureIdConsistent(user, id);
         checkNotFoundWithId(userRepository.existsById(id), id);
-        return userRepository.save(user);
+        return userRepository.save(UserUtil.prepareToSave(user, passwordEncoder));
     }
 
     @DeleteMapping("/{id}")

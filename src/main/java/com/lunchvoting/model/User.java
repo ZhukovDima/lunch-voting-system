@@ -1,11 +1,13 @@
 package com.lunchvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -21,6 +23,8 @@ public class User extends AbstractNamedEntity {
 
     @NotBlank
     @Column(name = "password", nullable = false)
+    @Size(min = 5, max = 100)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Enumerated(EnumType.STRING)

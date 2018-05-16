@@ -1,6 +1,7 @@
 package com.lunchvoting.web;
 
 import com.lunchvoting.TestUtil;
+import com.lunchvoting.UserTestData;
 import com.lunchvoting.model.User;
 import com.lunchvoting.repository.UserRepository;
 import com.lunchvoting.web.json.JsonUtil;
@@ -35,7 +36,7 @@ public class UserRestControllerTest extends AbstractControllerTest {
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(expected)))
+                .content(UserTestData.jsonWithPassword(expected, "newPass")))
             .andExpect(status().isCreated());
         User returned = TestUtil.readFromJson(action, User.class);
         expected.setId(returned.getId());
