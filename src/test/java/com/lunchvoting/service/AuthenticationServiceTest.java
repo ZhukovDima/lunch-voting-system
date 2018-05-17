@@ -12,6 +12,6 @@ public class AuthenticationServiceTest extends AbstractServiceTest {
 
     @Test
     public void getByEmail() throws Exception {
-        assertMatch(authenticationService.getByEmail("user1@mail.com"), USER1);
+        assertMatch(authenticationService.getByEmail("user@mail.com"), USER1);
     }
 }

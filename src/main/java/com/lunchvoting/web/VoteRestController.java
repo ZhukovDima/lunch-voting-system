@@ -4,6 +4,7 @@ import com.lunchvoting.AuthorizedUser;
 import com.lunchvoting.model.Vote;
 import com.lunchvoting.repository.MenuRepository;
 import com.lunchvoting.service.VoteService;
+import com.lunchvoting.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,5 +43,13 @@ public class VoteRestController extends AbstractController {
             default:
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping
+    public ResponseEntity<Vote> getCurrent() {
+        return voteService.getCurrentByUserId(AuthorizedUser.id())
+                .map(v -> new ResponseEntity<>(v, HttpStatus.OK))
+                .orElseThrow(() -> new NotFoundException("Vote has not been found for " + AuthorizedUser.get().getUsername()));
     }
 }

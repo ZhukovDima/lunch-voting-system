@@ -60,9 +60,9 @@ public class MenuRestController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") int id) {
-        log.info("delete menu {}", id);
-        checkNotFoundWithId(menuRepository.delete(id) != 0, id);
+    public void delete(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
+        log.info("delete menu {} for restaurant {}", id, restaurantId);
+         checkNotFoundWithId(menuRepository.delete(id, restaurantId) != 0, id);
     }
 
     @GetMapping(value = REST_URL)
@@ -71,18 +71,21 @@ public class MenuRestController extends AbstractController {
         return new ResponseEntity<>(menuRepository.getAllByDate(date != null ? date : LocalDate.now()), HttpStatus.OK);
     }
 
-    @GetMapping(value = REST_URL + "/{id}")
-    public ResponseEntity<Menu> get(@PathVariable("id") int id) {
+    @GetMapping(value = RESTAURANT_MENU_REST_URL + "/{id}")
+    public ResponseEntity<Menu> get(@PathVariable("restaurantId") int restaurantId, @PathVariable("id") int id) {
         log.info("get menu {}", id);
         return menuRepository.findById(id)
-                .map(m -> new ResponseEntity<>(m, HttpStatus.OK))
+                .map(m -> {
+                    assureIdConsistent(m.getRestaurant(), restaurantId);
+                    return new ResponseEntity<>(m, HttpStatus.OK);
+                })
                 .orElseThrow(notFoundWithId(id));
     }
 
     @GetMapping(value = RESTAURANT_MENU_REST_URL)
     public Menu getByRestaurantId(@PathVariable("restaurantId") int restaurantId, @RequestParam(value = "date", required = false) LocalDate date) {
         log.info("get menu for restaurant {} and date {}", restaurantId, date);
-        return checkNotFound(menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now()),
-                "restaurantId=" + restaurantId + (date != null ? "date=" + date : ""));
+        checkNotFoundWithId(restaurantRepository.existsById(restaurantId), restaurantId);
+        return menuRepository.getByRestaurantId(restaurantId, date != null ? date : LocalDate.now());
     }
 }

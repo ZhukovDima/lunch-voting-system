@@ -38,7 +38,6 @@ public class VoteServiceImpl implements VoteService {
         return vote;
     }
 
-
     @Override
     public Vote createOrUpdate(Vote vote) throws TimeViolationException {
         Assert.notNull(vote, "Vote must not be null");

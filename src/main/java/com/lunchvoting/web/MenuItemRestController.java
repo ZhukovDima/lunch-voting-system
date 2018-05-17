@@ -15,14 +15,12 @@ import java.net.URI;
 
 import static com.lunchvoting.util.ValidationUtil.*;
 import static com.lunchvoting.util.ValidationUtil.checkNotFoundWithId;
-import static com.lunchvoting.web.MenuItemRestController.REST_URL;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class MenuItemRestController extends AbstractController {
 
     static final String REST_URL = "/rest/restaurants/{restaurantId}/menus/{menuId}/items";
-    static final String ITEMS_REST_URL = "/rest/restaurants/menus/items";
 
     @Autowired
     private MenuItemRepository menuItemRepository;
@@ -56,16 +54,18 @@ public class MenuItemRestController extends AbstractController {
                            @PathVariable("menuId") int menuId, @PathVariable("id") int id) {
         log.info("update {} for menu {}", menuItem, menuId);
         assureIdConsistent(menuItem, id);
-        checkNotFoundWithId(menuRepository.existsById(menuId), menuId);
+        checkNotFoundWithId(menuRepository.existsByRestaurantId(menuId, restaurantId), menuId);
         menuItem.setMenu(menuRepository.getOne(menuId));
         menuItemRepository.save(menuItem);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = ITEMS_REST_URL + "/{id}")
-    public void delete(@PathVariable("id") int id) {
-        log.info("delete item {}", id);
-        checkNotFoundWithId(menuItemRepository.delete(id) != 0, id);
+    @DeleteMapping(value = REST_URL + "/{id}")
+    public void delete(@PathVariable("restaurantId") int restaurantId,
+                       @PathVariable("menuId") int menuId, @PathVariable("id") int id) {
+        log.info("delete item {} for menu {}", id);
+        checkNotFoundWithId(menuRepository.existsByRestaurantId(menuId, restaurantId), menuId);
+        checkNotFoundWithId(menuItemRepository.delete(id, menuId) != 0, id);
     }
 }

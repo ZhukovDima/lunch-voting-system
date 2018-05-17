@@ -14,6 +14,6 @@ public class VoteUtil {
 
     public static void checkUpdateTimeViolation(Vote vote) {
         if (vote.getDateEntered().compareTo(VOTE_CLOSING_TIME) >= 0)
-            throw new TimeViolationException("");
+            throw new TimeViolationException("Vote may only be changed until " + VOTE_CLOSING_TIME);
     }
 }

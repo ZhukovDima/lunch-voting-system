@@ -6,7 +6,7 @@ DELETE FROM user_role;
 DELETE FROM user;
 
 INSERT INTO user (id, name, email, password) VALUES
-  (1, 'User1', 'user1@mail.com', '{noop}password1'),
+  (1, 'User', 'user@mail.com', '{noop}password'),
   (2, 'User2', 'user2@mail.com', '{noop}password2'),
   (3, 'Admin', 'admin@mail.com', '{noop}admin');
 

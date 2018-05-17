@@ -51,6 +51,15 @@ public class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testCreateForbidden() throws Exception {
+        mockMvc.perform(post(REST_URL)
+                .with(userHttpBasic(USER1))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .content(JsonUtil.writeValue(RestaurantTestData.getNew())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testGetAll() throws Exception {
         TestUtil.print(mockMvc.perform(get(REST_URL)
                 .with(userHttpBasic(USER1)))
@@ -89,6 +98,15 @@ public class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testUpdateForbidden() throws Exception {
+        mockMvc.perform(put(REST_URL + RESTAURANT_1_ID)
+                .with(userHttpBasic(USER1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(RESTAURANT1)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete(REST_URL + RESTAURANT_1_ID)
                 .with(userHttpBasic(ADMIN)))
@@ -102,5 +120,13 @@ public class RestaurantRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(delete(REST_URL + RESTAURANT_1_ID))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testDeleteForbidden() throws Exception {
+        mockMvc.perform(delete(REST_URL + RESTAURANT_1_ID)
+                .with(userHttpBasic(USER1)))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 }

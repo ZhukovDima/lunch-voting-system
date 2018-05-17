@@ -1,6 +1,5 @@
 package com.lunchvoting.web;
 
-import com.lunchvoting.TestUtil;
 import com.lunchvoting.UserTestData;
 import com.lunchvoting.model.Menu;
 import com.lunchvoting.repository.MenuRepository;
@@ -20,6 +19,7 @@ import static com.lunchvoting.TestUtil.*;
 import static com.lunchvoting.TestUtil.contentJson;
 import static com.lunchvoting.TestUtil.contentJsonArray;
 import static com.lunchvoting.UserTestData.ADMIN;
+import static com.lunchvoting.UserTestData.USER1;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -59,6 +59,15 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testCreateForbidden() throws Exception {
+        mockMvc.perform(post(RESTAURANT_MENU_REST_URL)
+                .with(userHttpBasic(USER1))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JsonUtil.writeValue(getNew())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testUpdate() throws Exception {
         Menu updated = new Menu(R_1_MENU_1);
         updated.setDateEntered(LocalDate.now().plus(1, ChronoUnit.DAYS));
@@ -78,6 +87,15 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testUpdateForbidden() throws Exception {
+        mockMvc.perform(put(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
+                .with(userHttpBasic(USER1))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JsonUtil.writeValue(UPDATED_MENU)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
                 .with(userHttpBasic(ADMIN)))
@@ -90,6 +108,13 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     public void testDeleteUnauth() throws Exception {
         mockMvc.perform(delete(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testDeleteForbidden() throws Exception {
+        mockMvc.perform(delete(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
+                .with(userHttpBasic(USER1)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -115,7 +140,7 @@ public class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + R_1_MENU_1_ID)
+        mockMvc.perform(get(RESTAURANT_MENU_REST_URL + R_1_MENU_1_ID)
                 .with(userHttpBasic(UserTestData.USER1)))
                 .andExpect(status().isOk())
                 .andDo(print())
