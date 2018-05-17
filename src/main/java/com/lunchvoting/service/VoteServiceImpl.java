@@ -24,6 +24,15 @@ public class VoteServiceImpl implements VoteService {
         return voteRepository.findByUserIdBetween(userId, CURRENT_DAY_START_DATE_TIME, CURRENT_DAY_END_DATE_TIME);
     }
 
+    @Override
+    public Vote createOrUpdate(Vote vote) throws TimeViolationException {
+        Assert.notNull(vote, "Vote must not be null");
+
+        return getCurrentByUserId(vote.getUser().getId())
+                .map(v -> update(vote, v.getId()))
+                .orElse(create(vote));
+    }
+
     private Vote create(Vote vote) {
         vote.setStatus(Vote.Status.CREATED);
         return voteRepository.save(vote);
@@ -36,14 +45,5 @@ public class VoteServiceImpl implements VoteService {
         vote = voteRepository.save(vote);
         vote.setStatus(Vote.Status.UPDATED);
         return vote;
-    }
-
-    @Override
-    public Vote createOrUpdate(Vote vote) throws TimeViolationException {
-        Assert.notNull(vote, "Vote must not be null");
-
-        return getCurrentByUserId(vote.getUser().getId())
-                .map(v -> update(vote, v.getId()))
-                .orElse(create(vote));
     }
 }

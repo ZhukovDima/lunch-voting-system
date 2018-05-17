@@ -48,7 +48,7 @@ public class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnauthorized());
     }
     @Test
-    public void testGetCurrentForbiden() throws Exception {
+    public void testGetCurrentForbidden() throws Exception {
         mockMvc.perform(get(REST_URL)
                 .with(TestUtil.userHttpBasic(ADMIN)))
                 .andExpect(status().isForbidden());

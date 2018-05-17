@@ -20,17 +20,22 @@ Each restaurant provides new menu each day.
 ## Github Repository:
 git clone https://github.com/ZhukovDima/lunch-voting-system.git
 
+## RUN
+mvn clean package
+
 ### Application deployed in application context `lunch-voting-system`.
+
+The application uses Hibernate Second Level Cache on User and Restaurant resources
 
 ## cURL operations on a User resource
 ##### Retrieves all users
-curl -s http://localhost:8080/lunch-voting-system/rest/users
+curl -s http://localhost:8080/lunch-voting-system/rest/users -u admin@mail.com:admin
 ##### Retrieves a user
 curl -s http://localhost:8080/lunch-voting-system/rest/users/1 -u admin@mail.com:admin
 ##### Creates a user
 curl -s http://localhost:8080/lunch-voting-system/rest/users -X POST -d'{"name":"New user","email":"newuser@mail.com","password":"new123","roles":["ROLE_USER"]}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Updates a user
-curl -s http://localhost:8080/lunch-voting-system/rest/users/1 -X PUT -d '{"id":1,"name":"New user","email":"updateduser@mail.com","password":"new123","roles":["ROLE_USER"]}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+curl -s http://localhost:8080/lunch-voting-system/rest/users/1 -X PUT -d '{"id":1,"name":"Updated user","email":"updateduser@mail.com","password":"new123","roles":["ROLE_USER"]}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Deletes a user
 curl -s http://localhost:8080/lunch-voting-system/rest/users/1 -X DELETE -u admin@mail.com:admin
 
@@ -53,14 +58,14 @@ curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/menus -u user
 curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/menus?date=2018-05-12 -u user@mail.com:password
 ##### Retrieves menus for a given restaurant for today by default
 curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus -u user@mail.com:password
-##### Retrieves a menu for a given restaurant the given date
+##### Retrieves a menu for a given restaurant and the given date
 curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus?date=2018-05-12 -u user@mail.com:password
 ##### Retrieves a menu of a given restaurant
 curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus/1 -u user@mail.com:password
 ##### Creates a new menu for a given restaurant
 curl http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus -s -X POST -d '{"dateEntered":"2018-05-13"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Updates a menu for a given restaurant
-curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus/1 -s -X PUT -d '{"id":1, "dateEntered":"2018-05-13"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
+curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus/1 -s -X PUT -d '{"id":1, "dateEntered":"2018-05-14"}' -H 'Content-Type: application/json' -u admin@mail.com:admin
 ##### Deletes a menu for a given restaurant
 curl -s http://localhost:8080/lunch-voting-system/rest/restaurants/1/menus/1 -X DELETE -u admin@mail.com:admin
 
